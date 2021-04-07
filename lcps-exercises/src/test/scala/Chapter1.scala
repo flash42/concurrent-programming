@@ -21,8 +21,8 @@ class Chapter1 {
     assertEquals(false, check(0 until 10)(40 / _ > 0))
     assertEquals(true, check(1 until 10)(40 / _ > 0))
   }
-  
+
   @Test def permutationsWork(): Unit = {
-    assertEquals("ab" :: "ba" :: Nil, permutations("ab"))
+    assertEquals(("a" :: "b" :: "c" :: Nil).permutations.toList.sorted.map(l => l.mkString("")), permutations("abc").sorted)
   }
 }

@@ -27,6 +27,22 @@ def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = xs match {
                 false
   }
 
+def a_rest[A](coll: Seq[A]): Seq[Tuple2[A, Seq[A]]] = {
+    var result = List[Tuple2[A, Seq[A]]]()
+    for (idx <- 0 until coll.size) {
+        result = (coll(idx), coll.take(idx) ++ coll.drop(idx + 1)) :: result
+    }
+    result
+}
+
+// TODO rewrite this :D
 def permutations(x: String): Seq[String] = {
-    Nil
+    if (x.size == 1) return x :: Nil
+    var result = List[String]()
+    for (c <- a_rest(x)) {
+        val (char, others) = c
+        val firstChar = char.toString
+        result = result ++  permutations(others.mkString("")).map(rest => firstChar + rest)
+    }
+    result
 }
