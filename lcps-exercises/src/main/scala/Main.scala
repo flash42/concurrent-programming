@@ -20,29 +20,24 @@ def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = xs match {
     case Nil => true
     case (x +: xs) =>
         Try(pred(x)) match
-            case Success(v) =>
-                if (v) check[T](xs)(pred) 
-                else false
-            case Failure(e) =>
-                false
+            case Success(v) => if (v) check[T](xs)(pred) else false
+            case Failure(e) => false
   }
 
-def a_rest[A](coll: Seq[A]): Seq[Tuple2[A, Seq[A]]] = {
+
+case class Parts(first: String, rest: String)
+
+def gen_first_rest_combinations[A](coll: Seq[A]): Seq[Parts] = {
     var result = List[Tuple2[A, Seq[A]]]()
-    for (idx <- 0 until coll.size) {
+    for (idx <- 0 until coll.size)
         result = (coll(idx), coll.take(idx) ++ coll.drop(idx + 1)) :: result
-    }
-    result
+    return result.map((char, others) => Parts(char.toString, others.mkString("")))
 }
 
-// TODO rewrite this :D
 def permutations(x: String): Seq[String] = {
     if (x.size == 1) return x :: Nil
     var result = List[String]()
-    for (c <- a_rest(x)) {
-        val (char, others) = c
-        val firstChar = char.toString
-        result = result ++  permutations(others.mkString("")).map(rest => firstChar + rest)
-    }
+    for (parts <- gen_first_rest_combinations(x))
+        result = result ++ (permutations(parts.rest) map (perm_result => parts.first + perm_result))
     result
 }
