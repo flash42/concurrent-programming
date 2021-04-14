@@ -41,3 +41,22 @@ def permutations(x: String): Seq[String] = {
         result = result ++ (permutations(parts.rest) map (perm_result => parts.first + perm_result))
     result
 }
+
+def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]] = {
+    def _combinations(n: Int, prefix: List[Int], xs: List[Int]): Seq[List[Int]] = (n, xs) match {
+        case (0, _) =>
+            prefix :: Nil
+        case (_, x::xs) =>
+            // We need to calculate the successively narrower list for the iterations
+            val usedItems = scala.collection.mutable.Set[Int]()
+            val a = (x::xs).flatMap(el => {
+                usedItems += el
+                _combinations(n - 1, el :: prefix, xs.filterNot(elInner => usedItems.contains(elInner)))
+            })
+            a
+        case (_, Nil) =>
+            // May it be
+            Nil
+    }
+    _combinations(n, Nil, xs.toSet.toList).iterator
+}
