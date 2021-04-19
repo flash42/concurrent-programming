@@ -47,7 +47,6 @@ def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]] = {
             val usedItems = scala.collection.mutable.Set[Int]()
             (x::xs).to(LazyList).flatMap(el => {
                 usedItems += el
-                println("ALMA")
                 _combinations(n - 1, el #:: prefix, xs.filterNot(elInner => usedItems.contains(elInner)))
             })
         case (_, Nil) =>
