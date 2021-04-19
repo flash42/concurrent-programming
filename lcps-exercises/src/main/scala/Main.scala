@@ -27,36 +27,32 @@ def check[T](xs: Seq[T])(pred: T => Boolean): Boolean = xs match {
 
 case class Parts(first: String, rest: String)
 
-def gen_first_rest_combinations[A](coll: Seq[A]): Seq[Parts] = {
-    var result = List[Tuple2[A, Seq[A]]]()
-    for (idx <- 0 until coll.size)
-        result = (coll(idx), coll.take(idx) ++ coll.drop(idx + 1)) :: result
-    return result.map((char, others) => Parts(char.toString, others.mkString("")))
+def gen_first_rest_combinations[A](coll: Seq[A]): LazyList[Parts] = {
+    return (0 until coll.size).to(LazyList) map (idx => Parts(coll(idx).toString, (coll.take(idx) ++ coll.drop(idx + 1)).mkString("")))
 }
 
-def permutations(x: String): Seq[String] = {
-    if (x.size == 1) return x :: Nil
+def permutations(x: String): LazyList[String] = {
+    if (x.size == 1) return x #:: LazyList.empty
     var result = List[String]()
-    for (parts <- gen_first_rest_combinations(x))
-        result = result ++ (permutations(parts.rest) map (perm_result => parts.first + perm_result))
-    result
+    return gen_first_rest_combinations(x) flatMap (parts => (permutations(parts.rest) map (perm_result => parts.first + perm_result)))
 }
 
 def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]] = {
-    def _combinations(n: Int, prefix: List[Int], xs: List[Int]): Seq[List[Int]] = (n, xs) match {
+    def _combinations(n: Int, prefix: LazyList[Int], xs: List[Int]): LazyList[LazyList[Int]] = (n, xs) match {
         case (0, _) =>
-            prefix :: Nil
+            prefix #:: LazyList.empty
         case (_, x::xs) =>
             // We need to calculate the successively narrower list for the iterations
+            // TODO code smell: external data is used in flatMap
             val usedItems = scala.collection.mutable.Set[Int]()
-            val a = (x::xs).flatMap(el => {
+            (x::xs).to(LazyList).flatMap(el => {
                 usedItems += el
-                _combinations(n - 1, el :: prefix, xs.filterNot(elInner => usedItems.contains(elInner)))
+                println("ALMA")
+                _combinations(n - 1, el #:: prefix, xs.filterNot(elInner => usedItems.contains(elInner)))
             })
-            a
         case (_, Nil) =>
             // May it be
-            Nil
+            LazyList.empty
     }
-    _combinations(n, Nil, xs.toSet.toList).iterator
+    _combinations(n, LazyList.empty, xs.toSet.toList).iterator
 }
