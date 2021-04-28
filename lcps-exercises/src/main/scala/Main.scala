@@ -72,5 +72,12 @@ def parallel[A, B](a: () => A, b: () => B): (A, B) = {
     val t2 = thread{ bRes = Some(b()) }
     t1.join()
     t2.join()
-    aRes.flatMap(a => bRes.map(b => (a, b))).get
+    aRes.flatMap(a => None.map(b => (a, b))).get
+}
+
+def periodically(duration: Long)(b: () => Unit): Unit = {
+    // TODO Read volatile local var: https://stackoverflow.com/questions/50107720/can-i-have-a-local-var-in-scala-as-volatile-since-in-java-it-is-not-possible
+    var cnt: Int = 0
+    val t = thread { while cnt < 10 do { b(); cnt += 1; Thread.sleep(duration) }}
+    t.join()
 }
