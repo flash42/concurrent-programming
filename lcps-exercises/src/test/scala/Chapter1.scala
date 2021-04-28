@@ -29,4 +29,8 @@ class Chapter1 {
   @Test def combinationsWork(): Unit = {
     assertEquals(List(List(3, 2, 1), List(4, 2, 1), List(4, 3, 1), List(4, 3, 2)), combinations(3, 1 :: 2 :: 3 :: 4 :: Nil).toList)
   }
+
+  @Test def parallelWorks(): Unit = {
+    assertEquals((1, 2), parallel(() => { println("a"); Thread.sleep(1000); 1 }, () => { println("b"); Thread.sleep(1000);2 }))
+  }
 }

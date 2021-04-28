@@ -55,3 +55,22 @@ def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]] = {
     }
     _combinations(n, LazyList.empty, xs.toSet.toList).iterator
 }
+
+def thread(body: => Unit): Thread = {
+    val t = new Thread {
+        override def run() = body
+    }
+    t.start()
+    t
+}
+
+
+def parallel[A, B](a: () => A, b: () => B): (A, B) = {
+    var aRes: Option[A] = None
+    var bRes: Option[B] = None
+    val t1 = thread{ aRes = Some(a()) }
+    val t2 = thread{ bRes = Some(b()) }
+    t1.join()
+    t2.join()
+    aRes.flatMap(a => bRes.map(b => (a, b))).get
+}
