@@ -1,8 +1,8 @@
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.scalatest.Assertions._
 import book.*
-
-import java.util.concurrent.atomic.AtomicInteger
+import chapter2.SyncVar
 
 case class Chapter2() {
 
@@ -19,5 +19,10 @@ case class Chapter2() {
     var cnt: Int = 0
     periodically(0)(() => cnt += 1)
     assertEquals(10, cnt)
+  }
+
+  @Test def syncVarWorks(): Unit = {
+    val syncVar= SyncVar[String]()
+    assertThrows[UninitializedFieldError] {syncVar.get()}
   }
 }
