@@ -72,7 +72,7 @@ def parallel[A, B](a: () => A, b: () => B): (A, B) = {
     val t2 = thread{ bRes = Some(b()) }
     t1.join()
     t2.join()
-    aRes.flatMap(a => None.map(b => (a, b))).get
+    aRes.flatMap(a => bRes.map(b => (a, b))).get
 }
 
 def periodically(duration: Long)(b: () => Unit): Unit = {

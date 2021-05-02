@@ -9,14 +9,14 @@ class SyncVar[T] {
         value = null
         x
       }
-      case _: Null => throw UninitializedFieldError("Value field should be set")
+      case null => throw UninitializedFieldError("Value field should be set")
     }
   }
 
   def put(x: T): Unit = {
     value match {
       case x: T => throw IllegalStateException("Value is already set")
-      case _: Null => value = x
+      case null => value = x
     }
   }
 }

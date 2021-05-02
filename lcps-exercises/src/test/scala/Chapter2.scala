@@ -24,5 +24,9 @@ case class Chapter2() {
   @Test def syncVarWorks(): Unit = {
     val syncVar= SyncVar[String]()
     assertThrows[UninitializedFieldError] {syncVar.get()}
+    syncVar.put("1")
+    assertThrows[IllegalStateException] {syncVar.put("2")}
+    assertEquals("1", syncVar.get())
   }
+
 }
