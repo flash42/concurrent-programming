@@ -1,14 +1,14 @@
 package chapter2
 
-class SyncVar[T] {
-  var value: T | Null = null
+case class SyncVar[T]() {
+  @volatile var value: T | Null = null
 
   def get(): T = {
     value match {
-      case x: T => {
+      case x: T =>
+
         value = null
         x
-      }
       case null => throw UninitializedFieldError("Value field should be set")
     }
   }
@@ -16,7 +16,15 @@ class SyncVar[T] {
   def put(x: T): Unit = {
     value match {
       case x: T => throw IllegalStateException("Value is already set")
-      case null => value = x
+      case null =>
+        value = x
+
     }
   }
+
+  def isEmpty: Boolean = value == null
+
+  def nonEmpty: Boolean = !isEmpty
+
+  override def toString: String = if value != null then value.toString else ""
 }

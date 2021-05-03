@@ -1,5 +1,7 @@
 package book
-import scala.util.{Try, Success, Failure}
+import util.*
+
+import scala.util.{Failure, Success, Try}
 
 @main def main: Unit = {
     println(compose((a: Int) => a * 2, (a: Int) => a + 2)(2))
@@ -54,14 +56,6 @@ def combinations(n: Int, xs: Seq[Int]): Iterator[Seq[Int]] = {
             LazyList.empty
     }
     _combinations(n, LazyList.empty, xs.toSet.toList).iterator
-}
-
-def thread(body: => Unit): Thread = {
-    val t = new Thread {
-        override def run() = body
-    }
-    t.start()
-    t
 }
 
 
