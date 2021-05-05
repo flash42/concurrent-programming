@@ -1,7 +1,7 @@
 package chapter2
 
 case class SyncVar[T]() {
-  @volatile var value: T | Null = null
+  var value: T | Null = null
 
   def get(): T = {
     value match {
@@ -14,17 +14,26 @@ case class SyncVar[T]() {
   }
 
   def put(x: T): Unit = {
-    value match {
-      case x: T => throw IllegalStateException("Value is already set")
-      case null =>
-        value = x
+      value match {
+        case x: T => throw IllegalStateException("Value is already set")
+        case null =>
+          println("put" + x)
+          value = x
 
     }
   }
 
-  def isEmpty: Boolean = value == null
 
-  def nonEmpty: Boolean = !isEmpty
+  def isEmpty: Boolean = {
+//    println("isEmpty" + value)
+    value == null
+  }
+
+  def nonEmpty: Boolean = {
+//    println("nonEmpty" + value)
+
+    !isEmpty
+  }
 
   override def toString: String = if value != null then value.toString else ""
 }
