@@ -20,7 +20,7 @@ def produceAndConsume(times: Int = 15): Int = {
     while cnt < times do
       syncVar.synchronized {
         if syncVar.nonEmpty then
-          println(syncVar.get())
+          println(syncVar.get)
       }
     println("consumer done")
   }
@@ -48,7 +48,7 @@ def produceAndConsume2(times: Int = 15): Int = {
     while (cnt < times)
       syncVar.synchronized {
         while (syncVar.isEmpty) syncVar.wait()
-        println(syncVar.get())
+        println(syncVar.get)
         syncVar.notify()
       }
 

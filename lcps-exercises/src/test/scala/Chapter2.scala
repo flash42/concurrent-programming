@@ -24,10 +24,10 @@ case class Chapter2() {
 
   @Test def syncVarWorks(): Unit = {
     val syncVar = SyncVar[String]()
-    assertThrows[UninitializedFieldError] {syncVar.get()}
+    assertThrows[UninitializedFieldError] {syncVar.get}
     syncVar.put("1")
     assertThrows[IllegalStateException] {syncVar.put("2")}
-    assertEquals("1", syncVar.get())
+    assertEquals("1", syncVar.get)
   }
 
   @Test def produceAndConsumeWorks(): Unit = {
@@ -41,6 +41,18 @@ case class Chapter2() {
 
   @Test def produceAndConsume3Works(): Unit = {
     assertEquals(16, produceAndConsume3(16))
+  }
+
+  @Test def syncQueueWorks(): Unit = {
+    val syncQueue = SyncQueue[String](3)
+    assertThrows[IllegalStateException] {syncQueue.get}
+    syncQueue.put("1")
+    syncQueue.put("2")
+    syncQueue.put("3")
+    assertThrows[IllegalStateException] {syncQueue.put("2")}
+    assertEquals("3", syncQueue.get)
+    assertEquals("2", syncQueue.get)
+    assertEquals("1", syncQueue.get)
   }
 
 }
