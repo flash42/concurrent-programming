@@ -23,15 +23,21 @@ case class SyncVar[T]() {
     }
   }
 
+  def getWait(): T = {
+    while (isEmpty) wait()
+    get()
+  }
+
+  def putWait(v: T): Unit = {
+    while (nonEmpty) wait()
+    put(v)
+  }
 
   def isEmpty: Boolean = {
-//    println("isEmpty" + value)
     value == null
   }
 
   def nonEmpty: Boolean = {
-//    println("nonEmpty" + value)
-
     !isEmpty
   }
 

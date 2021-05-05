@@ -57,3 +57,30 @@ def produceAndConsume2(times: Int = 15): Int = {
   consumer.join()
   cnt
 }
+
+def produceAndConsume3(times: Int): Int = {
+  val syncVar = SyncVar[Int]()
+
+  var cnt = 0
+  val producer = thread {
+    while (cnt < times)
+      syncVar.synchronized {
+        syncVar.putWait(cnt)
+        cnt += 1
+        syncVar.notify()
+      }
+
+
+  }
+  val consumer = thread {
+    while (cnt < times)
+      syncVar.synchronized {
+        println(syncVar.getWait())
+        syncVar.notify()
+      }
+
+  }
+  producer.join()
+  consumer.join()
+  cnt
+}

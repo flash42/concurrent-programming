@@ -38,4 +38,9 @@ case class Chapter2() {
     assertEquals(16, produceAndConsume2(16))
   }
 
+
+  @Test def produceAndConsume3Works(): Unit = {
+    assertEquals(16, produceAndConsume3(16))
+  }
+
 }
