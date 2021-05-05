@@ -1,6 +1,6 @@
 package chapter2
 
-case class SyncVar[T]() extends chapter2.SyncStore[T] {
+case class SyncVar[T]() extends SyncStore[T] {
   var value: T | Null = null
 
   override def get: T = {

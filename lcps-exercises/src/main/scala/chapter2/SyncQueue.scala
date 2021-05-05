@@ -1,6 +1,6 @@
 package chapter2
 
-case class SyncQueue[T](n: Int) extends chapter2.SyncStore[T] {
+case class SyncQueue[T](n: Int) extends SyncStore[T] {
   var queue = List[T]()
 
   override def get: T = {
