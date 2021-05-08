@@ -53,7 +53,7 @@ def send(a1: Account, a2: Account, n: Int): Unit = {
   }
 }
 
-def sendAll(accounts: Set[Account], target: Account): Unit = {
+def sendAll_with_multiple_threads(accounts: Set[Account], target: Account): Unit = {
   // Assumptions:
   // - we shall use send function
   // - all send operations run in their own thread
@@ -64,4 +64,11 @@ def sendAll(accounts: Set[Account], target: Account): Unit = {
     send(a, target, a.money)
   })
   for (t <- threads) t.join()
+}
+
+def sendAll(accounts: Set[Account], target: Account): Unit = {
+  for (a <- accounts) {
+    val m = a.money
+    send(a, target, m)
+  }
 }

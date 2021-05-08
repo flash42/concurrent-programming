@@ -73,11 +73,14 @@ case class Chapter2() {
 
   @Test def sendAllWorks(): Unit = {
     val r = scala.util.Random
-    val from = (for (_ <- 0 to 100) yield Account("Oh", r.nextInt(100))).toSet
+    val from = (for (_ <- 0 to 100) yield Account("Jack", r.nextInt(100))).toSet
     val to = Account("Jill", 0)
     val from_sum = from.toList.map(_.money).sum
-    sendAll(from, to)
-
+    val threads = for (_ <- 0 to 100) yield thread {
+      Thread.sleep(r.nextLong(2))
+      sendAll(from, to)
+    }
+    for (t <- threads) t.join()
     assertEquals(from_sum, to.money)
   }
 }
