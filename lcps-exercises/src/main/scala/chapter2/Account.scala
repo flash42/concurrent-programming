@@ -54,5 +54,14 @@ def send(a1: Account, a2: Account, n: Int): Unit = {
 }
 
 def sendAll(accounts: Set[Account], target: Account): Unit = {
-
+  // Assumptions:
+  // - we shall use send function
+  // - all send operations run in their own thread
+  // TODO how can a deadlock occur?
+  val r = scala.util.Random
+  val threads = accounts.map(a => thread {
+    Thread.sleep(r.nextLong(100))
+    send(a, target, a.money)
+  })
+  for (t <- threads) t.join()
 }

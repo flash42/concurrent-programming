@@ -70,4 +70,14 @@ case class Chapter2() {
     assertEquals(1000, a.money)
     assertEquals(2000, b.money)
   }
+
+  @Test def sendAllWorks(): Unit = {
+    val r = scala.util.Random
+    val from = (for (_ <- 0 to 100) yield Account("Oh", r.nextInt(100))).toSet
+    val to = Account("Jill", 0)
+    val from_sum = from.toList.map(_.money).sum
+    sendAll(from, to)
+
+    assertEquals(from_sum, to.money)
+  }
 }
