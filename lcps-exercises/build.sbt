@@ -6,7 +6,7 @@ lazy val root = project
     name := "scala3-simple",
     version := "0.1.0",
     scalacOptions ++= Seq(
-      "-Ycheck-init",
+      "-Ysafe-init",
       "-Yexplicit-nulls"
     ),
     scalaVersion := scala3Version,
