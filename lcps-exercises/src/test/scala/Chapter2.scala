@@ -2,8 +2,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.scalatest.Assertions._
 import book.*
-import chapter2.SyncVar
 import chapter2.*
+import util.*
 
 case class Chapter2() {
 
@@ -55,4 +55,19 @@ case class Chapter2() {
     assertEquals("1", syncQueue.get)
   }
 
+  @Test def sendWorks(): Unit = {
+    val a = new Account("Jack", 1000)
+    val b = new Account("Jill", 2000)
+    val t1 = thread {
+      for (i <- 0 until 100) send(a, b, 1)
+    }
+    val t2 = thread {
+      for (i <- 0 until 100) send(b, a, 1)
+    }
+    t1.join();
+    t2.join()
+
+    assertEquals(1000, a.money)
+    assertEquals(2000, b.money)
+  }
 }
