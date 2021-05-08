@@ -71,6 +71,7 @@ case class Chapter2() {
     assertEquals(2000, b.money)
   }
 
+  // TODO fix issue with sendAll. It is not a deadlock but at least we have something :)
   @Test def sendAllWorks(): Unit = {
     val r = scala.util.Random
     val from = (for (_ <- 0 to 100) yield Account("Jack", r.nextInt(100))).toSet
@@ -82,5 +83,31 @@ case class Chapter2() {
     }
     for (t <- threads) t.join()
     assertEquals(from_sum, to.money)
+  }
+  @Test def asyncWorks(): Unit = {
+    val pool = PriorityTaskPool(PoolSize(1), PrioLimit(1))
+    val r = scala.util.Random
+    val syncQ = SyncQueue[String](8)
+    val p1 = () => pool.asynchronous(1)({ println("A") })
+    val p2 = () => pool.asynchronous(2)({ println("B") })
+    val generators = List(p2, p1, p1, p2, p2, p2, p1, p1, p1)
+
+    for (i <- 0 to 8) generators(i)()
+    Thread.sleep(100)
+  }
+
+  @Test def asyncPoolWorks(): Unit = {
+    val pool = PriorityTaskPool(PoolSize(8), PrioLimit(2))
+    pool.pause()
+    val r = scala.util.Random
+    val syncQ = SyncQueue[String](8)
+    val p1 = () => pool.asynchronous(1)({ println("A") })
+    val p2 = () => pool.asynchronous(2)({ println("B") })
+    val generators = List(p2, p1, p1, p2, p2, p2, p1, p1, p1)
+
+    for (i <- 0 to 8) generators(i)()
+    pool.resume()
+
+    Thread.sleep(100)
   }
 }
