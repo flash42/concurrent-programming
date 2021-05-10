@@ -88,8 +88,8 @@ case class Chapter2() {
     val pool = PriorityTaskPool(PoolSize(1), PrioLimit(1))
     val r = scala.util.Random
     val syncQ = SyncQueue[String](8)
-    val p1 = () => pool.asynchronous(1)({ println("A") })
-    val p2 = () => pool.asynchronous(2)({ println("B") })
+    val p1 = () => pool.asynchronous(1)((n: String) => { println("A") })
+    val p2 = () => pool.asynchronous(2)((n: String) => { println("B") })
     val generators = List(p2, p1, p1, p2, p2, p2, p1, p1, p1)
 
     for (i <- 0 to 8) generators(i)()
@@ -101,8 +101,8 @@ case class Chapter2() {
     pool.pause()
     val r = scala.util.Random
     val syncQ = SyncQueue[String](8)
-    val p1 = () => pool.asynchronous(1)({ println("A") })
-    val p2 = () => pool.asynchronous(2)({ println("B") })
+    val p1 = () => pool.asynchronous(1)((n: String) => { println(n + "A") })
+    val p2 = () => pool.asynchronous(2)((n: String) => { println(n + "B") })
     val generators = List(p2, p1, p1, p2, p2, p2, p1, p1, p1)
 
     for (i <- 0 to 8) generators(i)()
