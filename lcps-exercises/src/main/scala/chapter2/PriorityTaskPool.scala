@@ -1,9 +1,7 @@
 package chapter2
 
 import collection.mutable.PriorityQueue
-
-// TODO make it work with guarded blocks
-// TODO implement shutdown
+import scala.annotation.tailrec
 
 opaque type PoolSize = Int
 opaque type PrioLimit = Int
@@ -20,6 +18,7 @@ extension (x: PoolSize | PrioLimit)
 case class PriorityTaskPool(poolSize: PoolSize, prioLimit: PrioLimit) {
   val tasks = PriorityQueue[(Int, String => Unit)]()(Ordering.by(ordering))
   @volatile var paused = false
+  var terminated = false
   var hasStarted: Boolean = false
   start()
 
@@ -28,7 +27,7 @@ case class PriorityTaskPool(poolSize: PoolSize, prioLimit: PrioLimit) {
   }
 
   private def ordering(tuple2: Null | (Int, String => Unit)) = {
-    if (tuple2 == null) -1 else -tuple2._1
+    if (tuple2 == null) -1 else tuple2._1
   }
 
   def pause(): Unit = {
@@ -44,18 +43,16 @@ case class PriorityTaskPool(poolSize: PoolSize, prioLimit: PrioLimit) {
     val w = new Thread {
       def poll(): Option[String => Unit] = tasks.synchronized {
           while (paused || tasks.isEmpty) tasks.wait()
-          Some(tasks.dequeue()._2)
+          val task = tasks.dequeue()
+          if (terminated && task._1 < prioLimit.toInt) None else Some(task._2)
       }
 
-      override def run() = while (true) {
-        poll() match {
-          case Some(x) => x(name)
-          case None =>
-        }
+      @tailrec override def run() = poll() match {
+        case Some(task) => task(name); run()
+        case None =>
       }
     }
     w.setName(name)
-    w.setDaemon(true)
     w.start()
     w
   }
@@ -65,8 +62,9 @@ case class PriorityTaskPool(poolSize: PoolSize, prioLimit: PrioLimit) {
     tasks.notifyAll()
   }
 
-  def shutdown(): Unit = {
-    
+  def shutdown(): Unit = tasks.synchronized {
+    terminated = true
+    tasks.notify()
   }
 }
 

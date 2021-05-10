@@ -110,4 +110,20 @@ case class Chapter2() {
 
     Thread.sleep(100)
   }
+
+  @Test def asyncPoolShutdownWorks(): Unit = {
+    val pool = PriorityTaskPool(PoolSize(8), PrioLimit(2))
+    pool.pause()
+    val r = scala.util.Random
+    val syncQ = SyncQueue[String](8)
+    val p1 = () => pool.asynchronous(1)((n: String) => { println(n + "A") })
+    val p2 = () => pool.asynchronous(2)((n: String) => { println(n + "B") })
+    val generators = List(p2, p1, p1, p2, p2, p2, p1, p1, p1)
+
+    for (i <- 0 to 8) generators(i)()
+    pool.shutdown()
+    pool.resume()
+
+    Thread.sleep(100)
+  }
 }
