@@ -1,8 +1,4 @@
-## sbt project compiled with Scala 3
+# LCPS
+## Questions
 
-### Usage
-
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
-
-For more information on the sbt-dotty plugin, see the
-[dotty-example-project](https://github.com/lampepfl/dotty-example-project/blob/master/README.md).
+Why using daemon thread in SynchronizedPool example? Only to make the program stop by JVM halting because no user threads are running? It makes sense, but is it a best practice to do this? Aren't daemon threads not used for important program parts only for maintenance tasks like gc?
