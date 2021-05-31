@@ -51,3 +51,14 @@ def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B = {
   // TODO implement again without help :)
   foldMap(as, endoMonoid[B])(f.curried)(z)
 }
+
+def foldMapV[A, B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): B = {
+      if (v.isEmpty)
+        println("empty")
+        m.zero
+      else if(v.length == 1)
+        m.op(m.zero, f(v(0)))
+      else
+        val (fh, lh) = v.splitAt(v.length / 2)
+        m.op(foldMapV(fh, m)(f), foldMapV(lh, m)(f))
+}

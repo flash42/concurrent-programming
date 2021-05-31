@@ -26,3 +26,6 @@ class MonoidTest:
 
   @Test def foldMapWorks(): Unit =
     assertEquals(18, foldMap(List(1.2, 3.4, 5.6), intMultiplication)((f: Double) => f.round.toInt))
+
+  @Test def foldMapVWorks(): Unit =
+    assertEquals(18, foldMapV(Vector(1.2, 3.4, 5.6), intMultiplication)((f: Double) => f.round.toInt))
