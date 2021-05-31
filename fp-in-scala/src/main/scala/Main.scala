@@ -33,25 +33,8 @@ def endoMonoid[A] = new Monoid[A => A] {
   def zero = identity
 }
 
-@main def hello: Unit =
-  println(intAddition.op(1, 2))
-  println(intMultiplication.op(1, 2))
-  println(booleanAnd.op(true, booleanAnd.zero))
-  println(booleanAnd.op(false, booleanAnd.zero))
-  println(booleanOr.op(false, booleanOr.zero))
-  println(booleanOr.op(true, booleanOr.zero))
-  val r = (a: Int) => a * 2
-  val s = (a: Int) => a + 2
-  val t = (a: Int) => a -1
-  val em1 = endoMonoid.op(r, endoMonoid.op(s, t))
-  val em2 = endoMonoid.op(endoMonoid.op(r, s), t)
-  println(em1(5))
-  println(em2(5))
-  print(foldMap(List(1.2, 3.4, 5.6), intMultiplication)((f: Double) => f.round.toInt))
-
 trait Gen[A]
 trait Prop
-
 
 def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = {
   // TODO implement property based testing
@@ -59,6 +42,7 @@ def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = {
 }
 
 def concatenate[A](as: List[A], m: Monoid[A]): A = as.foldLeft(m.zero)(m.op)
+
 def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B = {
   as.foldLeft(m.zero)((a, b) => m.op(a, f(b)))
 }
@@ -67,4 +51,3 @@ def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B = {
   // TODO implement again without help :)
   foldMap(as, endoMonoid[B])(f.curried)(z)
 }
-
